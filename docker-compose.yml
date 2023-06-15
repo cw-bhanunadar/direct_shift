@@ -1,0 +1,47 @@
+version: '3'
+services:
+  db:
+    platform: linux/amd64
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'backend_development'
+      MYSQL_USER: 'bhanu'
+      MYSQL_PASSWORD: 'Bhanu@123'
+      MYSQL_ROOT_PASSWORD: 'Bhanu@123'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '3306:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+      # Where our data will be persisted
+    volumes:
+      - my-db:/var/lib/mysql
+  backend:
+    container_name: backend
+    build: ./backend
+    command: bundle exec rails s -p 3000 -b '0.0.0.0' 
+    environment:
+      DB_HOST: db
+      DB_USER: bhanu
+    ports:
+      - 3000:3000
+    volumes:
+      - ./backend:/myapp/backend
+    depends_on:
+      - db
+  frontend:
+    container_name: frontend
+    image: "node:18-alpine"
+    user: "node"
+    working_dir: /myapp/frontend
+    ports:
+      - 80:4000
+    volumes:
+      - ./frontend:/myapp/frontend
+    command: "yarn dev"
+    depends_on:
+      - backend
+volumes:
+  my-db:
