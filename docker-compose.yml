@@ -34,13 +34,13 @@ services:
   frontend:
     container_name: frontend
     image: "node:18-alpine"
-    user: "node"
+    user: "root"
     working_dir: /myapp/frontend
     ports:
       - 80:4000
     volumes:
       - ./frontend:/myapp/frontend
-    command: "sudo yarn dev"
+    command: "yarn dev"
     depends_on:
       - backend
 volumes:
