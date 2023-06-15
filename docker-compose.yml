@@ -40,7 +40,7 @@ services:
       - 80:4000
     volumes:
       - ./frontend:/myapp/frontend
-    command: "yarn dev"
+    command: "sudo yarn dev"
     depends_on:
       - backend
 volumes:
