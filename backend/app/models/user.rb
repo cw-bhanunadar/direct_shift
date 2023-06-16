@@ -7,4 +7,12 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  after_create :check_referral_present
+
+  def check_referral_present
+    referral = Referral.where(email: self.email).take
+    referral.update_columns(status: 'accepted') if referral.present?
+  end
+
 end
