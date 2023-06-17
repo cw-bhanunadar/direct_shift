@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+cd backend
+echo "Installing Ruby dependencies..."
+bundle install
+
+echo "Running database migrations..."
+rails db:migrate
+
+cd ../frontend
+echo "Installing JavaScript dependencies..."
+yarn
+
+echo "Setup completed successfully!"

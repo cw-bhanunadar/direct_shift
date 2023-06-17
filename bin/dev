@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Start Rails server in the background
+cd backend
+rails server -d -p 3000
+
+# Start React server in the background
+cd ../frontend
+yarn dev &
+
+echo "Servers started in the background."
