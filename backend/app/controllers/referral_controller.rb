@@ -4,6 +4,8 @@ class ReferralController < ApplicationController
   def create
     @referral = Referral.new(referral_params)
     if @referral.save
+
+      ReferralMailer.with(referral: @referral).referral_mail.deliver_later
       render json: { 
         data: {
           id: @referral.id
