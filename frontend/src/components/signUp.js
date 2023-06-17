@@ -42,7 +42,7 @@ export default function SignUpComp() {
                 });
 
                 if (response.data?.status === 'success') {
-                    navigate('/users');
+                    navigate('/referrals');
                 }
             } catch (error) {
                 console.error(error);

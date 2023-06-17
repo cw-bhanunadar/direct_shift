@@ -13,11 +13,13 @@ import Copyright from './Copyright';
 import {useState} from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
 	const [data, setData] = useState({
 		email: undefined,
 		password: undefined,
@@ -39,6 +41,7 @@ export default function SignIn() {
 				});
 				console.log(response.data);
 				console.log(response, 'response');
+        navigate('/referrals');
 			} catch (error) {
 				console.error(error);
 			}
