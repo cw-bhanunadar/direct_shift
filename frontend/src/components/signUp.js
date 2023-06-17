@@ -14,12 +14,21 @@ import {useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from "../redux/actionTypes/actionTypes";
 
 const defaultTheme = createTheme();
 
 export default function SignUpComp() {
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
+    var user = {
+      authorizationToken: '', 
+      email: '', 
+      client: '', 
+      accessToken: ''
+    }
+    dispatch(setUserDetails(user));
 	const [data, setData] = useState({
         name: '',
 		email: '',
@@ -37,16 +46,26 @@ export default function SignUpComp() {
 			);
 		} else {
 			try {
-                const response = await axios.post('http://34.16.132.47:3000/auth', {
-                  ...data,
-                });
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await axios.post(`${apiUrl}/auth`, {
+          ...data,
+        });
 
-                if (response.data?.status === 'success') {
-                    navigate('/referrals');
-                }
-            } catch (error) {
-                console.error(error);
-            }
+        if (response.data?.status === 'success') {
+          console.log(response.headers)
+          var user = {
+            authorizationToken: response.headers?.authorization, 
+            email: response.headers?.uid, 
+            client: response.headers?.client, 
+            accessToken: response.headers['access-token']
+          }
+          }
+          console.log("bhanu")
+          dispatch(setUserDetails(user));
+          navigate('/referrals');
+      } catch (error) {
+          console.error(error);
+      }
 		}  
 	};
 

@@ -36,6 +36,8 @@ services:
       - 80:4000
     volumes:
       - ./frontend:/myapp/frontend
+    env_file:
+      - ./frontend/.env
     command: "yarn dev"
     depends_on:
       - backend

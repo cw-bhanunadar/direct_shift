@@ -59,7 +59,7 @@ MYSQL_ROOT_PASSWORD=xxx
 
 // Frontend
 PORT=4000
-
+REACT_APP_API_URL=http://localhost:3000
 ```
 
 4. Build and start the Docker containers using Docker Compose:

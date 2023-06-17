@@ -5,23 +5,35 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CreateReferral from './createReferral';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUserDetails } from "../redux/actionTypes/actionTypes";
 
 const Header = ({ user = '', fetchData = () => {} }) => {
 	const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const userDetail = useSelector(state => state.user);
     const [open, setOpen] = useState(false);
 
 	const handleLogout = async() => {
 		try {
-			const response = await axios.delete('http://34.16.132.47:3000/auth/sign_out', {
-				'uid': user,
-				"client": "iXb93R71gMedAVQ5frXxCg",
-				"access-token": "D61q48ZL-VwWiVQbFGgNNQ"
-			});
-
-            if (response.data?.status === 'success') {
-                navigate('/');
-            }
+      const apiUrl = process.env.REACT_APP_API_URL;
+			const response = await axios.delete(`${apiUrl}/auth/sign_out`, { data: {
+				uid: userDetail.email,
+				client: userDetail.client,
+				"access-token": userDetail.accessToken
+      }
+      });
+      var user = {
+        authorizationToken: '', 
+        email: '', 
+        client: '', 
+        accessToken: ''
+      }
+      dispatch(setUserDetails(user));
+      console.log(response);
+      if (response.data?.success === true) {
+          navigate('/');
+      }
 		} catch (error) {
 			console.error(error);
 		}

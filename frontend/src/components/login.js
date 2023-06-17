@@ -14,17 +14,26 @@ import {useState} from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from "../redux/actionTypes/actionTypes";
 
 const defaultTheme = createTheme();
 
-export default function SignIn() {
+const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 	const [data, setData] = useState({
 		email: undefined,
 		password: undefined,
 	})
-
+  var user = {
+    authorizationToken: '', 
+    email: '', 
+    client: '', 
+    accessToken: ''
+  }
+  dispatch(setUserDetails(user));
+  
 	const handleSubmit = async(event) => {
 		event.preventDefault();
 
@@ -36,11 +45,17 @@ export default function SignIn() {
 			);
 		} else {
 			try {
-				const response = await axios.post('http://34.16.132.47:3000/auth/sign_in', {
+        const apiUrl = process.env.REACT_APP_API_URL;
+				const response = await axios.post(`${apiUrl}/auth/sign_in`, {
 				  ...data,
 				});
-				console.log(response.data);
-				console.log(response, 'response');
+				var user = {
+          authorizationToken: response.headers?.authorization, 
+          email: response.headers?.uid, 
+          client: response.headers?.client, 
+          accessToken: response.headers['access-token']
+        }
+        dispatch(setUserDetails(user));
         navigate('/referrals');
 			} catch (error) {
 				console.error(error);
@@ -144,3 +159,5 @@ export default function SignIn() {
 		</ThemeProvider>
 	);
 }
+
+export default SignIn

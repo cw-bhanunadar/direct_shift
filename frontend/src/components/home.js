@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { capitalize } from '@material-ui/core';
 import Header from './header';
+import { useSelector } from 'react-redux';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -32,12 +33,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const Referrals = () => {
+  const token = useSelector(state => state.user.authorizationToken);
 	const [referrals, setReferrals] = useState([]);
 
-	async function fetchData() {
+	const fetchData = () => {
 		try {
-			fetch('http://34.16.132.47:3000/referral/list', {
-				headers: { Authorization: 'Bearer eyJhY2Nlc3MtdG9rZW4iOiI0S28xNVpoT19LSS1kQ0QtSkZ4aXB3IiwidG9rZW4tdHlwZSI6IkJlYXJlciIsImNsaWVudCI6IlFoVTFyMjMtdXpsTk5wV1lwLXJpb3ciLCJleHBpcnkiOiIxNjg4MjEwNzIzIiwidWlkIjoibmFyZW5AZ21haWwuY29tIn0='}
+      const apiUrl = process.env.REACT_APP_API_URL;
+			fetch(`${apiUrl}/referral/list`, {
+				headers: { Authorization: token}
 			})
 				.then(response => {
 					return response.json()
@@ -46,6 +49,7 @@ const Referrals = () => {
 					setReferrals(data?.list)
 				})
 		} catch (error) {
+      setReferrals([])
 			console.error(error);
 		}
 	}
@@ -60,7 +64,7 @@ const Referrals = () => {
 
 	const user = referrals?.[0]?.referred_by;
 
-	const rows = referrals?.map((item) => createData(item.name, item.email, item.status, item.created_at));
+	const rows = referrals?.map((item) => createData(item.name, item.email, item.status, item.created_at)) ?? [];
 
 	return (
 		<div>

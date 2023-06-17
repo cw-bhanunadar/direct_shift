@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const style = {
   position: 'absolute',
@@ -19,6 +20,7 @@ const style = {
 };
 
 export default function CreateReferral({setOpen = () => {}, open = false, fetchData = () => {}}) {
+  const token = useSelector(state => state.user.authorizationToken);
     const [data, setData] = useState({
         name: '',
 		email: '',
@@ -26,80 +28,80 @@ export default function CreateReferral({setOpen = () => {}, open = false, fetchD
 
     const handleCreate = async(event) => {
         event.preventDefault();
-
+    const apiUrl = process.env.REACT_APP_API_URL;
 		try {
-            const response = await axios.post('http://34.16.132.47:3000/referral', data, {
-                headers: { 
-                    'Authorization': 'Bearer eyJhY2Nlc3MtdG9rZW4iOiI0S28xNVpoT19LSS1kQ0QtSkZ4aXB3IiwidG9rZW4tdHlwZSI6IkJlYXJlciIsImNsaWVudCI6IlFoVTFyMjMtdXpsTk5wV1lwLXJpb3ciLCJleHBpcnkiOiIxNjg4MjEwNzIzIiwidWlkIjoibmFyZW5AZ21haWwuY29tIn0=',
-                },
-            });
-            console.log(response)
-            if (response.data?.data?.status === 'success') {
-                setOpen(false);
-                fetchData();
-            }
+      const response = await axios.post(`${apiUrl}/referral`, data, {
+          headers: { 
+              'Authorization': token,
+          },
+      });
+      console.log(response)
+      if (response.data?.data?.status === 'success') {
+          setOpen(false);
+          fetchData();
+      }
         } catch (error) {
             console.error(error);
         }
     }
  
     return (
-        <div>
-            <Modal
-                keepMounted
-                open={open}
-                onClose={() => setOpen(false)}
-                aria-labelledby="keep-mounted-modal-title"
-                aria-describedby="keep-mounted-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
-                        Create Referral
-                    </Typography>
+      <div>
+        <Modal
+          keepMounted
+          open={open}
+          onClose={() => setOpen(false)}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style}>
+              <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+                  Create Referral
+              </Typography>
 
-                    <Box
-                        component="form"
-                        noValidate
-                        sx={{ mt: 1 }}
-                    >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="name"
-                            label="Name"
-                            name="name"
-                            autoComplete="name"
-                            autoFocus
-                            value={data?.name}
-                            onChange={(e) => setData({...data, name: e.target?.value})}
-                        />
+              <Box
+                  component="form"
+                  noValidate
+                  sx={{ mt: 1 }}
+              >
+                  <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="name"
+                      label="Name"
+                      name="name"
+                      autoComplete="name"
+                      autoFocus
+                      value={data?.name}
+                      onChange={(e) => setData({...data, name: e.target?.value})}
+                  />
 
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={data?.email}
-                            onChange={(e) => setData({...data, email: e.target?.value})}
-						/>
+                  <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      autoFocus
+                      value={data?.email}
+                      onChange={(e) => setData({...data, email: e.target?.value})}
+      />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            onClick={handleCreate}
-                        >
-                            Create
-                        </Button>
-                    </Box>
-                </Box>
-            </Modal>
-        </div>
+                  <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                      onClick={handleCreate}
+                  >
+                      Create
+                  </Button>
+              </Box>
+          </Box>
+        </Modal>
+      </div>
     );
 }
