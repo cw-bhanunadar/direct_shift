@@ -29,7 +29,25 @@ export default function SignUpComp() {
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		
+		if (['', null, undefined].includes(data?.email)) {
+			return (
+				<Alert severity="error" color="info">
+					Mandatory fields are required!
+				</Alert>
+			);
+		} else {
+			try {
+                const response = await axios.post('http://34.16.132.47:3000/auth', {
+                  ...data,
+                });
+
+                if (response.data?.status === 'success') {
+                    navigate('/users');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+		}  
 	};
 
 	return (
@@ -127,6 +145,14 @@ export default function SignUpComp() {
 							>
 								Sign In
 							</Button>
+
+							<Grid container>
+								<Link href="/" variant="body2">
+									Already have an account? Sign In
+								</Link>
+							</Grid>
+
+							<Copyright sx={{ mt: 5 }} />
 						</Box>
 					</Box>
 				</Grid>
