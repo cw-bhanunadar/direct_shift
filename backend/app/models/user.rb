@@ -14,5 +14,4 @@ class User < ActiveRecord::Base
     referral = Referral.where(email: self.email).take
     referral.update_columns(status: 'accepted') if referral.present?
   end
-
 end
