@@ -8,7 +8,8 @@ class ReferralController < ApplicationController
       ReferralMailer.with(referral: @referral).referral_mail.deliver_later
       render json: { 
         data: {
-          id: @referral.id
+          id: @referral.id,
+          status: 'success'
         }
        }, status: 200
     else
