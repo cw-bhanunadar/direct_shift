@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import ErrorToast from './errorToast';
 
 const style = {
   position: 'absolute',
@@ -25,28 +26,37 @@ export default function CreateReferral({setOpen = () => {}, open = false, fetchD
         name: '',
 		email: '',
 	});
+  const [toastDetail, setToastData] = useState({
+    show: false,
+    message: "Something went wrong!!",
+    severity: "success"
+  });
 
-    const handleCreate = async(event) => {
-        event.preventDefault();
-    const apiUrl = process.env.REACT_APP_API_URL;
-		try {
-      const response = await axios.post(`${apiUrl}/referral`, data, {
-          headers: { 
-              'Authorization': token,
-          },
-      });
-      console.log(response)
-      if (response.data?.data?.status === 'success') {
-          setOpen(false);
-          fetchData();
-      }
-        } catch (error) {
-            console.error(error);
-        }
+  const handleCreate = async(event) => {
+      event.preventDefault();
+  const apiUrl = process.env.REACT_APP_API_URL;
+  try {
+    const response = await axios.post(`${apiUrl}/referral`, data, {
+        headers: { 
+            'Authorization': token,
+        },
+    });
+    console.log(response)
+    if (response.data?.data?.status === 'success') {
+        setOpen(false);
+        setToastData({show: true, message: `Referral sent to ${data.email}`, severity: 'success'});
+        fetchData();
     }
- 
+      } catch (error) {
+          console.error(error);
+      }
+  }
+    const handleClose = () => {
+      setToastData({show: false, message: '', severity: ''})
+    }
     return (
       <div>
+        <ErrorToast open={toastDetail.show} message={toastDetail.message} handleClose={handleClose} severity={toastDetail.severity}/>
         <Modal
           keepMounted
           open={open}

@@ -11,6 +11,7 @@ import Paper from '@mui/material/Paper';
 import { capitalize } from '@material-ui/core';
 import Header from './header';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -33,8 +34,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const Referrals = () => {
+  const navigate = useNavigate();
   const token = useSelector(state => state.user.authorizationToken);
 	const [referrals, setReferrals] = useState([]);
+  if (!token) {
+    navigate('/');
+  }
 
 	const fetchData = () => {
 		try {

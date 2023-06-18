@@ -16,12 +16,17 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from "../redux/actionTypes/actionTypes";
+import ErrorToast from './errorToast';
 
 const defaultTheme = createTheme();
 
 const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [toastDetail, setToastData] = useState({
+    show: false,
+    message: "Something went wrong!!"
+  });
 	const [data, setData] = useState({
 		email: undefined,
 		password: undefined,
@@ -58,13 +63,21 @@ const SignIn = () => {
         dispatch(setUserDetails(user));
         navigate('/referrals');
 			} catch (error) {
+        if (error.response.status === 401) {
+          setToastData({show: true, message: 'Invalid Username or password'});
+        } else {
+          setToastData({show: true, message: 'Something went wrong!!'});
+        }
 				console.error(error);
 			}
 		}	
 	};
-
+  const handleClose = () => {
+    setToastData({show: false, message: ''})
+  }
 	return (
 		<ThemeProvider theme={defaultTheme}>
+      <ErrorToast open={toastDetail.show} message={toastDetail.message} handleClose={handleClose}/>
 			<Grid container component="main" sx={{ height: '100vh' }}>
 				<CssBaseline />
 

@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from "../redux/actionTypes/actionTypes";
+import ErrorToast from './errorToast';
 
 const defaultTheme = createTheme();
 
@@ -34,6 +35,11 @@ export default function SignUpComp() {
 		email: '',
 		password: '',
 	});
+
+  const [toastDetail, setToastData] = useState({
+    show: false,
+    message: "Something went wrong!!"
+  });
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -64,13 +70,19 @@ export default function SignUpComp() {
           dispatch(setUserDetails(user));
           navigate('/referrals');
       } catch (error) {
-          console.error(error);
+        setToastData({show: true, message: 'User already exist'});
+        console.error(error);
       }
 		}  
 	};
 
+  const handleClose = () => {
+    setToastData({show: false, message: ''})
+  }
+  
 	return (
 		<ThemeProvider theme={defaultTheme}>
+      <ErrorToast open={toastDetail.show} message={toastDetail.message} handleClose={handleClose}/>
 			<Grid container component="main" sx={{ height: '100vh' }}>
 				<CssBaseline />
 
